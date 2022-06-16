@@ -50,7 +50,7 @@ export default function LayoutDashboard({ user, children }) {
                 </li>
                 <li className="hover:font-bold"><a>Settings</a></li>
                 <li className="hover:font-bold">
-                <a onClick={handleLogOut} className={`btn btn-sm hover:bg-primary-focus ${loading ? "loading" : "btn-ghost"}`} >{loading ? "loading" : "logout"}</a>
+                <a onClick={handleLogOut} className={`btn btn-sm mb-2 hover:bg-primary-focus ${loading ? "loading" : "btn-ghost"}`} >{loading ? "loading" : "logout"}</a>
                 </li>
               </ul>
             </div>
