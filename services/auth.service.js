@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const API_URL = "http://prodapi.tagihin.my.id/api/v1";
+const API_URL = "https://api-tagihin.herokuapp.com/api/v1";
 
 const register = (fullname, username, email, password) => {
   return axios.post(API_URL + "/register", {
