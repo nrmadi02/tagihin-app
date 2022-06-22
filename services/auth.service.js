@@ -1,4 +1,5 @@
 import axios from "axios";
+import { removeCookies, setCookies } from 'cookies-next';
 
 const API_URL = "https://api-tagihin.herokuapp.com/api/v1";
 
@@ -18,13 +19,16 @@ const login = async (email, password) => {
       password,
     });
   if (response.data.data.token) {
+    setCookies("token", response.data.data.token)
     typeof window !== 'undefined' && localStorage.setItem("user", JSON.stringify(response.data.data));
   }
   return response.data;
 };
 
 const logout = () => {
+  removeCookies("token")
   typeof window !== 'undefined' && localStorage.removeItem("user");
+  
 };
 
 export default {

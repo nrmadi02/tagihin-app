@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { useRouter } from "next/router";
+import HomeLogo from "../../assets/icons/home.svg"
+import InvoiceLogo from "../../assets/icons/invoice.svg"
 
 export default function Sidebar({ isOpen }) {
   const router = useRouter()
@@ -7,17 +9,12 @@ export default function Sidebar({ isOpen }) {
     {
       href: '/dashboard',
       title: 'Dashboard',
-      icon: "🏡"
+      icon: <HomeLogo />
     },
     {
-      href: '/about',
-      title: 'About',
-      icon: "💬"
-    },
-    {
-      href: '/contact',
-      title: 'Contact',
-      icon: "📞"
+      href: '/invoice',
+      title: 'Invoice',
+      icon: <InvoiceLogo />
     },
   ];
   return (
@@ -29,9 +26,11 @@ export default function Sidebar({ isOpen }) {
               <a
                 className={`text-white flex p-2 rounded-md hover:bg-base-300 cursor-pointer ${router.asPath === href && 'bg-base-200 text-white'}`}
               >
-                <div className={`flex w-full flex-row ${isOpen ? "justify-between" : "justify-center"}`}>
+                <div className={`flex w-full items-center flex-row ${isOpen ? "justify-between" : "justify-center"}`}>
                   {isOpen && <p>{title}</p>}
-                  <p className={`${isOpen ? "block" : "hidden"} md:block`}>{icon}</p>
+                  <p className={`${isOpen ? "block" : "hidden"} md:block`}>
+                    {icon}
+                  </p>
                 </div>
               </a>
             </Link>
