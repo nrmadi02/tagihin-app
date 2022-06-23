@@ -45,13 +45,13 @@ export default function LayoutDashboard({children }) {
           </div>
           <div className="flex-1 md:ml-3">
             <Link href="/dashboard">
-              <Image className="btn btn-ghost btn-circle" quality={100} width={40} height={40} src={logo} />
+              <img className="btn btn-ghost btn-circle" width={40} height={40} src={logo.src} />
             </Link>
             <p className="text-white text-2xl font-bold ml-2">TAGIHIN</p>
           </div>
           <div className="flex-none">
             <div className="hidden mr-3 md:block">
-              <p className="font-bold">{dataUser?.fullname}</p>
+              <p className="font-bold">{dataUser?.username}</p>
               <p className="text-sm">{dataUser?.role == "ROLE_USER" ? "User" : "Administrator"}</p>
             </div>
             <div className="dropdown dropdown-end">

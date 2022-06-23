@@ -24,11 +24,11 @@ export default function Sidebar({ isOpen }) {
           <li className='m-2' key={title}>
             <Link href={href}>
               <a
-                className={`text-white flex p-2 rounded-md hover:bg-base-300 cursor-pointer ${router.asPath === href && 'bg-base-200 text-white'}`}
+                className={`text-white flex rounded-md ${isOpen ? "p-2" : "p-0 sm:p-2"} transition-all hover:bg-base-300 cursor-pointer ${router.asPath === href && 'bg-base-200 text-white'}`}
               >
                 <div className={`flex w-full items-center flex-row ${isOpen ? "justify-between" : "justify-center"}`}>
-                  {isOpen && <p>{title}</p>}
-                  <p className={`${isOpen ? "block" : "hidden"} md:block`}>
+                  <p className={`transition-all ${isOpen ? "block" : "hidden"}`}>{title}</p>
+                  <p className={`transition-all ${isOpen ? "block" : "hidden"} md:block`}>
                     {icon}
                   </p>
                 </div>
