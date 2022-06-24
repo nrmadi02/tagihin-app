@@ -12,7 +12,7 @@ export default function Sidebar({ isOpen }) {
       icon: <HomeLogo />
     },
     {
-      href: '/invoice',
+      href: '/dashboard/invoice',
       title: 'Invoice',
       icon: <InvoiceLogo />
     },

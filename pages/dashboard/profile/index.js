@@ -7,7 +7,7 @@ import { useSelector } from "react-redux";
 import useSWR from "swr";
 import Alert from "../../../components/Alert";
 import LayoutDashboard from "../../../components/Layout/LayoutDashboard";
-import PulseLoading from "../../../components/PulseLoading";
+import PulseLoading from "../../../components/PulseLoading/FormPulseLoading";
 import SelectForm from "../../../components/Select";
 
 const fetchProfile = async (url, token) =>
@@ -198,7 +198,7 @@ export default function Profile({ countries }) {
   return (
     <div className="bg-base-100">
       <Head>
-        <title>Tagihin App - Dashboard</title>
+        <title>Tagihin App - Profile</title>
       </Head>
       <LayoutDashboard>
         <div className="pt-3 px-5 pb-5 overflow-auto">
@@ -210,7 +210,7 @@ export default function Profile({ countries }) {
             </ul>
           </div>
           <div className="mt-3">
-            <h1 className="text-4xl font-extrabold">Profile {dataProfile?.first_name} {dataProfile?.last_name}</h1>
+            <h1 className="text-4xl font-extrabold">Profile</h1>
           </div>
           <div className="mt-5 flex flex-col gap-5 bg-base-300 p-8 rounded-lg shadow-2xl">
             <div className="flex gap-8 flex-col sm:flex-row">

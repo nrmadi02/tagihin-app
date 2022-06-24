@@ -1,4 +1,4 @@
-export default function PulseLoading() {
+export default function FormPulseLoading() {
   return (
     <div className="space-y-3 w-full">
       <div className="grid grid-cols-6 gap-4">
