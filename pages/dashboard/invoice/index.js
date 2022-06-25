@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import Head from "next/head"
 import Link from "next/link";
 import { useSelector } from "react-redux";
@@ -8,122 +8,108 @@ import { SelectColumnFilter } from "../../../components/Table/ColumnFilter";
 import { useEffect } from "react";
 import useSWR from "swr";
 import axios from "axios";
+import moment from "moment"
+import { ActionTableInvoice, StatusPaymentPill, StatusPill } from "../../../components/Table/CellsTable";
+import TablePulseLoading from "../../../components/PulseLoading/TablePulseLoading";
 
-const getData = () => {
-  const data = [{
-    name: "Jane Cooper",
-    email: "jane.cooper@example.com",
-    title: "Regional Paradigm Technician",
-    department: "Optimization",
-    status: "Active",
-    role: "Admin",
-    age: 27,
-    imgUrl:
-      "https://images.unsplash.com/photo-1494790108377-be9c29b29330?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-  {
-    name: "Cody Fisher",
-    email: "cody.fisher@example.com",
-    title: "Product Directives Officer",
-    department: "Intranet",
-    status: "Active",
-    role: "Owner",
-    age: 22,
-    imgUrl:
-      "https://images.unsplash.com/photo-1570295999919-56ceb5ecca61?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-  {
-    name: "Esther Howard",
-    email: "esther.howard@example.com",
-    title: "Forward Response Developer",
-    department: "Directives",
-    status: "Active",
-    role: "Member",
-    age: 25,
-    imgUrl:
-      "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-  {
-    name: "Jenny Wilson",
-    email: "jenny.wilson@example.com",
-    title: "Central Security Manager",
-    department: "Program",
-    status: "Active",
-    role: "Member",
-    age: 29,
-    imgUrl:
-      "https://images.unsplash.com/photo-1498551172505-8ee7ad69f235?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-  {
-    name: "Kristin Watson",
-    email: "kristin.watson@example.com",
-    title: "Lean Implementation Liaison",
-    department: "Mobility",
-    status: "Active",
-    role: "Admin",
-    age: 17,
-    imgUrl:
-      "https://images.unsplash.com/photo-1532417344469-368f9ae6d187?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },
-  {
-    name: "Cameron Williamson",
-    email: "cameron.williamson@example.com",
-    title: "Internal Applications Engineer",
-    department: "Security",
-    status: "Active",
-    role: "Member",
-    age: 22,
-    imgUrl:
-      "https://images.unsplash.com/photo-1566492031773-4f4e44671857?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=4&w=256&h=256&q=60",
-  },]
+const rupiah = (number) => {
+  return new Intl.NumberFormat("id-ID", {
+    style: "currency",
+    currency: "IDR"
+  }).format(number);
+}
 
-  return [...data, ...data, ...data]
-};
-const fetchInvoicePaid = async (url, token) =>
+const fetchInvoice = async (url, token) =>
   await axios.get(url, {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json"
     }
-  }).then((res) => console.log(res.data))
+  }).then((res) => res.data)
 
 export default function Invoice() {
   const { user } = useSelector(state => state.auth);
-  const { data: res, mutate } = useSWR(["https://api-tagihin.herokuapp.com/api/v1/invoices/status?status=paid", user?.token], fetchInvoicePaid)
+  const { data: invoicePaid, mutate: mutatePaid } = useSWR(["https://api-tagihin.herokuapp.com/api/v1/invoices/status?status=paid", user?.token], fetchInvoice)
+  const { data: invoiceAll, mutate: mutateAll } = useSWR(["https://api-tagihin.herokuapp.com/api/v1/invoices/user?userid=" + user?.id, user?.token], fetchInvoice)
+  const { data: invoiceUnpaid, mutate: mutateUnpaid } = useSWR(["https://api-tagihin.herokuapp.com/api/v1/invoices/status?status=unpaid", user?.token], fetchInvoice)
+
+  const [dataInvoicePaid, setDataInvoicePaid] = useState([])
+  const [dataInvoiceUnpaid, setDataInvoiceUnpaid] = useState([])
+  const [dataInvoiceAll, setDataInvoiceAll] = useState([])
+
+  const [dataInvoice, setDataInvoice] = useState([])
+
+  const [typeMenu, setTypeMenu] = useState("all")
+
+  const getData = (dataInvoice) => {
+    const data = dataInvoice
+    return [...data]
+  };
 
   const columns = useMemo(
     () => [
       {
-        Header: "Name",
-        accessor: "name",
+        Header: "Invoice Number",
+        accessor: d => {
+          return (<Link href={`/dashboard/invoice/${d.invoice_number}`}>
+            <p className="hover:font-black hover:cursor-pointer">{d.invoice_number}</p>
+          </Link>)
+        },
       },
       {
-        Header: "Age",
-        accessor: 'age',
+        Header: "Invoice Date",
+        accessor: d => {
+          return moment(d.date).local().format("MMMM DD, YYYY")
+        },
       },
       {
-        Header: "Title",
-        accessor: "title",
+        Header: "Invoice To",
+        accessor: d => {
+          return d.client.first_name + " " + d.client.last_name
+        },
+      },
+      {
+        Header: "Amount",
+        accessor: d => {
+          return rupiah(d.total)
+        },
+      },
+      {
+        Header: "Invoice Date Due",
+        accessor: d => {
+          return moment(d.date_due).local().format("MMMM DD, YYYY")
+        },
       },
       {
         Header: "Status",
         accessor: "status",
+        Cell: StatusPill,
       },
       {
-        Header: "Role",
-        accessor: "role",
-        Filter: SelectColumnFilter,  
-        filter: 'includes',
+        Header: "Status Payment",
+        accessor: "status_payment",
+        Cell: StatusPaymentPill,
+      },
+      {
+        Header: "Action",
+        accessor: "id",
+        Cell: ActionTableInvoice,
       },
     ],
     []
   );
 
-  const data = useMemo(() => getData(), []);
+  useEffect(() => {
+    invoicePaid && setDataInvoicePaid(invoicePaid.data)
+    invoiceAll && setDataInvoiceAll(invoiceAll.data)
+    invoiceUnpaid && setDataInvoiceUnpaid(invoiceUnpaid.data)
+  }, [invoicePaid, invoiceAll, invoiceUnpaid])
+
+  const data = useMemo(() => getData(dataInvoice), [dataInvoice]);
 
   useEffect(() => {
-    console.log(res)
-  }, [res])
+    typeMenu == "all" && setDataInvoice(dataInvoiceAll)
+  }, [dataInvoiceAll])
 
   return (
     <div className="bg-base-100">
@@ -135,15 +121,33 @@ export default function Invoice() {
           <div className="text-sm breadcrumbs">
             <ul>
               <li><Link href="/dashboard">Home</Link></li>
-              <li className="font-bold">Invoice</li>
+              <li className="font-bold text-white">Invoice</li>
             </ul>
           </div>
           <div className="mt-3 flex justify-between">
             <h1 className="text-4xl font-extrabold">Invoice</h1>
-            <button className="btn btn-primary">Add invoce +</button>
+            <Link href="/dashboard/invoice/add">
+              <button className="btn btn-primary">Add invoce +</button>
+            </Link>
           </div>
           <div className="mt-5 flex flex-col gap-5 bg-base-300 p-8 rounded-lg shadow-2xl">
-            <Table columns={columns} data={data} />
+            {dataInvoiceAll.length == 0 && (<TablePulseLoading />)}
+            {dataInvoiceAll.length != 0 && (<Table columns={columns} menus={(<div>
+              <div className="btn-group float-right">
+                <button onClick={() => {
+                  setTypeMenu("all")
+                  setDataInvoice(dataInvoiceAll)
+                }} className={`btn ${typeMenu == "all" && "btn-active"}`}>All</button>
+                <button onClick={() => {
+                  setTypeMenu("paid")
+                  setDataInvoice(dataInvoicePaid)
+                }} className={`btn ${typeMenu == "paid" && "btn-active"}`}>Paid</button>
+                <button onClick={() => {
+                  setTypeMenu("unpaid")
+                  setDataInvoice(dataInvoiceUnpaid)
+                }} className={`btn ${typeMenu == "unpaid" && "btn-active"}`}>Unpaid</button>
+              </div>
+            </div>)} data={data} />)}
           </div>
         </div>
       </LayoutDashboard>

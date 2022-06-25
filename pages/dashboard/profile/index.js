@@ -206,7 +206,7 @@ export default function Profile({ countries }) {
           <div className="text-sm breadcrumbs">
             <ul>
               <li><Link href="/dashboard">Home</Link></li>
-              <li className="font-bold">Profile</li>
+              <li className="font-bold text-white">Profile</li>
             </ul>
           </div>
           <div className="mt-3">

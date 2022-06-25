@@ -2,7 +2,7 @@ import { useFilters, useGlobalFilter, usePagination, useSortBy, useTable } from 
 import { SortDownIcon, SortIcon, SortUpIcon } from "../../assets/icons/Icons";
 import GlobalFilter from "./GlobalFilter";
 
-export default function Table({ data, columns }) {
+export default function Table({ data, columns, menus }) {
   const {
     getTableProps,
     getTableBodyProps,
@@ -30,6 +30,7 @@ export default function Table({ data, columns }) {
       }
     }, useFilters, useGlobalFilter, useSortBy, usePagination);
 
+
   return (
     <>
       <GlobalFilter
@@ -37,7 +38,8 @@ export default function Table({ data, columns }) {
         globalFilter={state.globalFilter}
         setGlobalFilter={setGlobalFilter}
       />
-      <div className="overflow-x-auto rounded-lg">
+      {menus}
+      <div className="overflow-x-auto overflow-y-visible rounded-lg">
         <table {...getTableProps()} border="1" className="table w-full">
           <thead>
             {headerGroups.map(headerGroup => (
@@ -62,6 +64,11 @@ export default function Table({ data, columns }) {
             ))}
           </thead>
           <tbody {...getTableBodyProps()}>
+            {page.length == 0 && <tr>
+              <td align="center" colSpan={columns.length}>
+                <p>Data not found ...</p>
+              </td>
+            </tr>}
             {page.map((row, i) => {
               prepareRow(row);
               return (

@@ -24,7 +24,7 @@ export default function GlobalFilter({
       <div className="form-control hidden sm:block">
         <input type="text" placeholder="search" className="sm:hidden input input-bordered input-primary w-full max-w-xs" />
         <label className="input-group">
-          <span>Search</span>
+          <span className="bg-primary text-white">Search</span>
           <input value={value || ""}
             onChange={e => {
               setValue(e.target.value);
