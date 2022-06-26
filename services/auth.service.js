@@ -12,6 +12,14 @@ const register = (fullname, username, email, password) => {
   });
 };
 
+const parseJwt = (token) => {
+  try {
+    return JSON.parse(atob(token.split('.')[1]));
+  } catch (e) {
+    return null;
+  }
+};
+
 const login = async (email, password) => {
   const response = await axios
     .post(API_URL + "/login", {
@@ -19,7 +27,13 @@ const login = async (email, password) => {
       password,
     });
   if (response.data.data.token) {
-    setCookies("token", response.data.data.token)
+    
+    const token = parseJwt(response.data.data.token)
+    const date = new Date(token.ExpiresAt * 1000)
+    setCookies("token", response.data.data.token, {
+      expires: date,
+      sameSite: true
+    })
     typeof window !== 'undefined' && localStorage.setItem("user", JSON.stringify(response.data.data));
   }
   return response.data;
